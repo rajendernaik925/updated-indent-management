@@ -1,0 +1,55 @@
+.list-group-item.active {
+  color: white;
+  border-radius: 10px;
+  margin-right: 15px;
+}
+.list-group-item a , span {
+  color: black;
+  position: relative
+}
+.line {
+  width: 4px;
+  height: 50px;
+  right: -10px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+li {
+  transition: background-color 0.5s;
+  margin: 3px;
+  border-radius: 10px;
+  margin-right: 15px;
+}
+
+li:hover {
+  background-color: rgba(0, 114, 188, 1);
+  border-radius: 10px;
+  margin-right: 15px;
+}
+
+.transition-bg {
+  transition: background-color 1s ease;
+}
+
+.transition-bg:hover {
+  background-color: rgba(0, 114, 188, 1) !important;
+}
+
+small {
+  transition: background-color 0.5s;
+  border-radius: 10px;
+  margin-right: 15px;
+}
+
+small:hover {
+  background-color: rgba(0, 114, 188, 1) !important;
+  border-radius: 10px;
+  margin-right: 15px;
+}
+
+.custom-bg {
+  background-color: rgba(0, 114, 188, 1) !important;
+  color: white  ;
+}
+
+

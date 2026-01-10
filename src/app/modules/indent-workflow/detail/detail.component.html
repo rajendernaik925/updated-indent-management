@@ -1,0 +1,525 @@
+<div class="container-fluid">
+
+  <!-- Top Title Row -->
+
+
+  <div class="row g-4 ">
+
+    <!-- LEFT SIDE BOX -->
+    <div class="col-md-7 card shadow-sm border-0 rounded-4">
+      <div class="d-flex align-items-center justify-content-between py-2 mx-0 mb-2">
+
+        <!-- LEFT: Back + Indent ID + Status -->
+        <div class="d-flex align-items-center">
+          <!-- <button type="button" class="btn btn-sm btn-light d-flex align-items-center" (click)="back()">
+            <i class="bi bi-chevron-left fs-5"></i>
+
+          </button> -->
+
+
+          <h5 class="m-0">{{ indentDetailsData?.indentId }}</h5>
+
+          <span class="badge ms-3 fw-semibold" [ngClass]="{
+            'bg-success-subtle text-success': indentDetailsData?.status === 'Approved',
+            'bg-danger-subtle text-danger': indentDetailsData?.status === 'Rejected',
+            'bg-warning-subtle text-warning':
+              indentDetailsData?.status !== 'Approved' &&
+              indentDetailsData?.status !== 'Rejected'
+          }">
+            ● {{ indentDetailsData?.status }}
+          </span>
+        </div>
+
+        <!-- RIGHT: Save button + View Files -->
+        <div class="d-flex align-items-center gap-2">
+          <button *ngIf="indentDetailsData?.canProcess" class="btn btn-sm custom-btn px-4"
+            (click)="updateAndSave(indentDetailsData?.sno)">
+            Process
+          </button>
+
+          <!-- <button *ngIf="indentDetailsData?.files" class="btn btn-sm btn-info text-white px-4" (click)="viewFile()">
+            View Files
+          </button> -->
+
+          <button *ngIf="indentDetailsData?.files" class="btn btn-sm btn-info text-white px-4" (click)="openFiles()">
+            View Files
+          </button>
+
+          <!-- PDF Viewer Component -->
+          <app-view-file #pdfViewer [indentId]="Id"></app-view-file>
+
+
+
+
+        </div>
+
+      </div>
+
+      <div class=" shadow-s border-0 rounded-4">
+        <div class="card-bod">
+
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label text-muted small">Division</label>
+              <span class="form-control form-control-sm bg-light" readonly>
+                {{ indentDetailsData?.division || '-' }}
+              </span>
+            </div>
+
+            <div class="col-md-3">
+              <label class="form-label text-muted small">Planned Budget</label>
+              <span class="form-control form-control-sm bg-light">
+                {{ indentDetailsData?.plannedBudget || '-' }}
+              </span>
+            </div>
+
+            <div class="col-md-3">
+              <label class="form-label text-muted small">Estimated Budget</label>
+              <span class="form-control form-control-sm bg-light">
+                {{ indentDetailsData?.estimatedBudget || '-' }}
+              </span>
+            </div>
+
+            <!-- <div class="col-md-3">
+              <label class="form-label text-muted small">File</label>
+              <span class="form-control form-control-sm bg-light fw-semibold">
+                View Files
+              </span>
+            </div> -->
+          </div>
+          <hr class="custom-hr">
+
+          <!-- <h6 class="fw-bold mb-3">Indent Details</h6> -->
+
+          <!-- First Row -->
+          <div class="scroll-container">
+
+            <div *ngFor="let mat of indentDetailsData?.materials; let i = index; let isLast = last" class="mb-3">
+
+              <!-- Header -->
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <!-- Left side -->
+                <h5 class="fw-semibold text-success">
+                  Material {{ i + 1 }}
+                </h5>
+
+                <!-- Right side button -->
+                <button *ngIf="indentDetailsData?.materials.length > 1 && indentDetailsData?.canWrite"
+                  class="btn btn-sm btn-danger" (click)="removeMaterial(mat.sno)">
+                  Remove Material
+                </button>
+
+              </div>
+
+
+              <div class="row g-2 small">
+
+                <!-- Plant -->
+                <div class="col-md-4">
+                  <label class="form-label text-muted mb-1">Plant</label>
+                  <span class="form-control form-control-sm bg-light" style="min-height: 28px;">
+                    {{ mat?.plantName || '-' }}
+                  </span>
+                </div>
+
+                <!-- Material Type -->
+                <div class="col-md-4">
+                  <label class="form-label text-muted mb-1">Material Type</label>
+                  <span class="form-control form-control-sm bg-light" style="min-height: 28px;">
+                    {{ mat?.materialType || '-' }}
+                  </span>
+                </div>
+
+                <!-- Quantity -->
+                <div class="col-md-4">
+                  <label class="form-label text-muted mb-1 d-flex justify-content-between align-items-center">
+                    <span>Quantity</span>
+                    <span *ngIf="indentDetailsData?.canWrite && ['indent', 'manager'].includes(module)"
+                      class="custom-text cursor-pointer" (click)="quantity(mat.quantity, mat.lastModified, mat.sno)">
+                      comment
+                    </span>
+                  </label>
+                  <span class="form-control form-control-sm bg-light" style="min-height: 28px;">
+                    {{ mat?.quantity || '-' }}
+                  </span>
+                </div>
+
+                <!-- Material Name -->
+                <div class="col-md-4">
+                  <label class="form-label text-muted mb-1">Material Name</label>
+                  <span class="form-control form-control-sm bg-light text-truncate" style="min-height: 28px;"
+                    title="{{ mat?.materialName }}">
+                    {{ mat?.materialName || '-' }}
+                  </span>
+                </div>
+
+                <!-- Unit Price -->
+                <div class="col-md-4">
+                  <label class="form-label text-muted mb-1 d-flex justify-content-between align-items-center">
+                    <span>Unit Price</span>
+                    <span *ngIf="indentDetailsData?.canWrite && ['purchase'].includes(module)"
+                      class="custom-text cursor-pointer"
+                      (click)="estimatedPrice(mat.unitPrice, mat.lastModified, mat.sno)">
+                      comment
+                    </span>
+                  </label>
+                  <span class="form-control form-control-sm bg-light" style="min-height: 28px;">
+                    {{ mat?.unitPrice || '0' }}
+                  </span>
+                </div>
+
+                <!-- Total Price -->
+                <div class="col-md-4">
+                  <label class="form-label text-muted mb-1">Total Price</label>
+                  <span class="form-control form-control-sm bg-light">
+                    {{ mat?.unitPrice * mat?.quantity | number:'1.2-2' }}
+                  </span>
+                </div>
+
+                <!-- Delivery Date -->
+                <div class="col-md-4">
+                  <label class="form-label text-muted mb-1">Delivery Date</label>
+                  <span class="form-control form-control-sm bg-light" style="min-height: 28px;">
+                    {{ mat?.deliveryDate | date:'dd-MM-yyyy' }}
+                  </span>
+                </div>
+
+                <!-- Vendor -->
+                <div class="col-md-4">
+                  <label class="form-label text-muted mb-1 d-flex justify-content-between align-items-center">
+                    <span>Vendor</span>
+                    <span *ngIf="indentDetailsData?.canWrite" class="custom-text cursor-pointer"
+                      (click)="vendorOffCanvas(mat.vendor, mat.lastModified, mat.sno)">
+                      comment
+                    </span>
+                  </label>
+                  <span class="form-control form-control-sm bg-light" style="min-height: 28px;">
+                    {{ mat?.vendor || '-' }}
+                  </span>
+                </div>
+
+                <!-- Comments -->
+                <div class="col-md-4">
+                  <label class="form-label text-muted mb-1">Comments</label>
+                  <span class="form-control form-control-sm bg-light text-truncate" style="min-height: 28px;"
+                    title="{{ mat?.comments }}">
+                    {{ mat?.comments || '-' }}
+                  </span>
+                </div>
+              </div>
+              <hr *ngIf="!isLast">
+            </div>
+
+
+
+          </div>
+
+
+
+          <!-- Buttons -->
+          <!-- <button *ngIf="!isEdit" class="custom-edit-btn my-3" (click)="toggleEdit()">
+              Edit
+            </button>
+
+
+            <button *ngIf="isEdit" class="btn custom-btn px-4 my-3" (click)="saveChanges()">
+              Save And Submit
+            </button> -->
+
+        </div>
+      </div>
+    </div>
+
+
+
+    <!-- RIGHT SIDE: APPROVAL STATUS -->
+    <div class="col-md-5">
+      <div class="card shadow-sm border-0 rounded-4">
+        <div class="card-body">
+
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="fw-bold mb-0">Approval Status</h5>
+
+            <button class="btn custom-btn btn-sm" (click)="viewSummary()">
+              View Summary
+            </button>
+          </div>
+
+
+          <div class="scroll-container-summary">
+            <table class="table table-bordered align-middle small">
+              <thead class="table-light">
+                <tr>
+                  <th width="30%">Approval Stage</th>
+                  <th width="35%">Approving Authority</th>
+                  <th>Comment</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <tr *ngFor="let stage of approvalStages">
+                  <!-- Stage -->
+                  <td>
+                    <span class="fw-bold text-dark">{{ stage.label }}</span><br />
+                    <span [ngClass]="{
+                      'text-success': stage.status === 'Approved',
+                      'text-warning': stage.status === 'Pending'
+                    }">
+                      ● {{ stage.status }}
+                    </span><br />
+                    <small>{{ stage.date }}</small>
+                  </td>
+
+                  <!-- Users -->
+                  <!-- <td class="">
+                    <ng-container *ngIf="stage.users?.length; else noUser">
+                      <div *ngFor="let user of stage.users" class="small">
+                        {{ user.user }}
+                      </div>
+                    </ng-container>
+
+                    <ng-template #noUser>
+                      <div class="text-center text-muted">-</div>
+                    </ng-template>
+                  </td> -->
+
+                  <td class="">
+                    <ng-container *ngIf="stage.processedBy; else noUser">
+                      {{ stage.processedBy | titlecase}}
+                    </ng-container>
+
+                    <ng-template #noUser>
+                      <div class="text-center text-muted">-</div>
+                    </ng-template>
+                  </td>
+
+
+                  <!-- Comment -->
+                  <td>
+                    <span *ngIf="stage.comment; else noComment">
+                      {{ stage.comment | slice: 0:30 }}{{ stage.comment.length > 30 ? '...' : '' }}
+                    </span>
+                    <ng-template #noComment>
+                      <div class="text-cente text-muted">-</div>
+                    </ng-template>
+                  </td>
+                </tr>
+              </tbody>
+
+            </table>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+
+
+
+<!-- PDF Overlay -->
+<div *ngIf="showPDF" class="overlay">
+
+  <!-- Close button (top-right like screenshot) -->
+  <button class="close-btn" (click)="closePDF()">✖</button>
+
+  <div class="pdf-container">
+
+    <!-- File selector -->
+    <div class="d-flex align-items-center gap-3 p-2">
+
+      <!-- LEFT: Scrollable file selector -->
+      <div class="file-selector d-flex flex-nowrap gap-3 flex-grow-1 overflow-auto">
+        <div *ngFor="let file of pdfFiles; let i = index" class="form-check me-3 py-1" style="white-space: nowrap;">
+          <input type="radio" name="pdfFiles" [checked]="selectedFileIndex === i" (change)="onFileChange(i)"
+            class="form-check-input" id="pdf{{ i }}" />
+
+          <label class="form-check-label ms-1 fw-bold text-truncate" style="max-width: 200px;" [title]="file.name"
+            for="pdf{{ i }}">
+            {{ file.name }}
+          </label>
+        </div>
+      </div>
+
+      <!-- RIGHT: Fixed button -->
+      <!-- <div class="flex-shrink-0">
+    <button class="btn btn-sm custom-btn">
+      Add File
+    </button>
+  </div> -->
+
+    </div>
+
+
+    <!-- PDF -->
+    <iframe [src]="selectedFileUrl"></iframe>
+
+  </div>
+</div>
+
+
+<!-- offcanvasQuantity -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasQuantity">
+  <div class="offcanvas-header">
+    <!-- <h5 class="offcanvas-title fw-bold">{{ Id }} </h5> -->
+    <span class="ms-1 text-muted"> Quantity Update</span>
+    <button type="button" class="btn-close border-0 shadow-none" data-bs-dismiss="offcanvas"></button>
+  </div>
+  <!-- <span class="ms-3 text-muted">Quantity</span> -->
+  <div class="offcanvas-body">
+    <form [formGroup]="quantityForm" (ngSubmit)="updateQuantity()">
+
+      <!-- Requested -->
+      <label class="form-label mt-2">Requested</label>
+      <span class="form-control bg-light d-block">
+        {{ quantityForm.get('requested')?.value }}
+      </span>
+
+      <!-- New Quantity -->
+      <label class="form-label mt-3">Your Suggestion/New</label>
+      <input type="text" formControlName="newQty" class="form-control" placeholder="Enter new quantity" numbersOnly
+        noFirstSpace maxlength="10" />
+      <div class="text-danger small" *ngIf="quantityForm.get('newQty')?.errors && quantityForm.get('newQty')?.touched">
+        <span *ngIf="quantityForm.get('newQty')?.errors?.['required']">Quantity is required.</span>
+        <span *ngIf="quantityForm.get('newQty')?.errors?.['min']">Quantity must be at least 1.</span>
+      </div>
+
+      <!-- Comment -->
+      <label class="form-label mt-3">Comment</label>
+      <input type="text" formControlName="comment" class="form-control" placeholder="Add comment" noFirstSpace
+        maxlength="500" />
+      <div class="text-danger small"
+        *ngIf="quantityForm.get('comment')?.errors && quantityForm.get('comment')?.touched">
+        <span *ngIf="quantityForm.get('comment')?.errors?.['required']">Comment is required.</span>
+        <span *ngIf="quantityForm.get('comment')?.errors?.['minlength']">Minimum 2 characters required.</span>
+      </div>
+
+      <button class="btn custom-btn mt-4 w-100" type="submit">
+        Update Status
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- offcanvasVendor -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasVendor">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title">{{ Id }}</h5>
+    <span class="ms-1 text-muted"> (Vendor Change)</span>
+    <button type="button" class="btn-close border-0 shadow-none hover" data-bs-dismiss="offcanvas"></button>
+  </div>
+
+  <div class="offcanvas-body">
+    <form [formGroup]="vendorChangeForm" (ngSubmit)="updateVendorChange()">
+
+      <!-- Current Vendor -->
+      <label *ngIf="vendorChangeForm.get('requested')?.value" class="form-label mt-2">Current Vendor</label>
+      <span *ngIf="vendorChangeForm.get('requested')?.value" class="form-control bg-light d-block">
+        {{ vendorChangeForm.get('requested')?.value }}
+      </span>
+      <hr class="hr-opacity-50 mt-2">
+
+      <!-- New Vendor -->
+      <label class="form-label mt-3">New Vendor</label>
+      <input type="text" formControlName="newVendor" class="form-control" placeholder="Enter new vendor name" />
+      <div class="text-danger small"
+        *ngIf="vendorChangeForm.get('newVendor')?.errors && vendorChangeForm.get('newVendor')?.touched">
+        <span *ngIf="vendorChangeForm.get('newVendor')?.errors?.['required']">New vendor is required.</span>
+        <span *ngIf="vendorChangeForm.get('newVendor')?.errors?.['minlength']">Minimum 2 characters required.</span>
+      </div>
+
+      <!-- Comment -->
+      <label class="form-label mt-3">Comment</label>
+      <input type="text" formControlName="comment" class="form-control" placeholder="Add comment" />
+      <div class="text-danger small"
+        *ngIf="vendorChangeForm.get('comment')?.errors && vendorChangeForm.get('comment')?.touched">
+        <span *ngIf="vendorChangeForm.get('comment')?.errors?.['required']">Comment is required.</span>
+        <span *ngIf="vendorChangeForm.get('comment')?.errors?.['minlength']">Minimum 2 characters required.</span>
+      </div>
+
+      <button class="btn custom-btn mt-4 w-100" type="submit">
+        Update Vendor
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- save and submit offcanvas -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="updateStatusOffcanvas">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title">Update Status</h5>
+    <button type="button" class="btn-close border-0 shadow-none" data-bs-dismiss="offcanvas"></button>
+  </div>
+
+  <div class="offcanvas-body">
+    <form [formGroup]="statusForm" (ngSubmit)="submitStatus()">
+
+      <!-- Status Dropdown -->
+      <label class="form-label mt-2">Select Status</label>
+      <select formControlName="status" class="form-select">
+        <option value="">Select</option>
+        <option value="1001">Approve</option>
+        <option value="1002">Reject</option>
+      </select>
+      <div class="text-danger small" *ngIf="statusForm.get('status')?.errors && statusForm.get('status')?.touched">
+        <span *ngIf="statusForm.get('status')?.errors?.['required']">Status is required.</span>
+      </div>
+
+      <!-- Comment Input -->
+      <label class="form-label mt-3">Comment</label>
+      <input type="text" formControlName="comment" class="form-control" placeholder="Enter comment" />
+      <div class="text-danger small" *ngIf="statusForm.get('comment')?.errors && statusForm.get('comment')?.touched">
+        <span *ngIf="statusForm.get('comment')?.errors?.['required']">Comment is required.</span>
+      </div>
+
+      <!-- Submit Button -->
+      <button class="btn custom-btn mt-4 w-100" type="submit">
+        Submit
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- offcanvasPrice -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasPrice">
+  <div class="offcanvas-header">
+    <span class="ms-1 text-muted">Unit Price Update</span>
+    <button type="button" class="btn-close border-0 shadow-none" data-bs-dismiss="offcanvas"></button>
+  </div>
+
+  <div class="offcanvas-body">
+    <form [formGroup]="priceChangeForm" (ngSubmit)="updatePriceChange()">
+
+      <!-- Current Estimated Change -->
+      <label class="form-label mt-2">Current Estimated Price</label>
+      <span class="form-control bg-light d-block">
+        {{ priceChangeForm.get('requested')?.value }}
+      </span>
+
+      <!-- New Estimated Change -->
+      <label class="form-label mt-3">New Estimated Price</label>
+      <input type="text" formControlName="newChange" class="form-control" placeholder="Enter new estimated price" />
+      <div class="text-danger small"
+        *ngIf="priceChangeForm.get('newChange')?.errors && priceChangeForm.get('newChange')?.touched">
+        <span *ngIf="priceChangeForm.get('newChange')?.errors?.['required']">Estimated change is required.</span>
+        <span *ngIf="priceChangeForm.get('newChange')?.errors?.['min']">Value must be at least 1.</span>
+      </div>
+
+      <!-- Comment -->
+      <label class="form-label mt-3">Comment</label>
+      <input type="text" formControlName="comment" class="form-control" placeholder="Add comment" />
+      <div class="text-danger small"
+        *ngIf="priceChangeForm.get('comment')?.errors && priceChangeForm.get('comment')?.touched">
+        <span *ngIf="priceChangeForm.get('comment')?.errors?.['required']">Comment is required.</span>
+        <span *ngIf="priceChangeForm.get('comment')?.errors?.['minlength']">Minimum 2 characters required.</span>
+      </div>
+
+      <button class="btn custom-btn mt-4 w-100" type="submit">
+        Update Change
+      </button>
+    </form>
+  </div>
+</div>

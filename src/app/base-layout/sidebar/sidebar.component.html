@@ -1,0 +1,115 @@
+<div class="d-flex align-items-stretch h-100 border-0">
+  <div class="card flex-fill border-0">
+    <div class="card-content border-0">
+      <!-- <div class="row mb-4">
+        <div class="col text-center p-2 pt-3">
+          <img [src]="image" class="rounded-2 h-100 w-75" alt="logo">
+        </div>
+      </div> -->
+      <ul class="list-group list-group-flush border-0">
+        <li
+          role="button"
+          class="list-group-item border-0 pb-3 d-flex align-items-center position-relative transition-bg"
+          [ngClass]="{'active': activeTab.includes('dashboard')}"
+          [routerLink]="'/dashboard'"
+          [ngStyle]="{'background-color': activeTab.includes('dashboard') ? 'rgba(0, 114, 188, 1)' : 'transparent'}"
+        >
+          <span>
+            <svg
+              width="28"
+              height="28"
+              [attr.fill]="activeTab.includes('dashboard') ? 'white' : 'black'"
+              fill="#000000"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+              id="dashboard-alt"
+              class="icon glyph"
+            >
+              <!-- SVG content here -->
+              <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+              <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+              <g id="SVGRepo_iconCarrier">
+                <path d="M14,10V22H4a2,2,0,0,1-2-2V10Z"></path>
+                <path d="M22,10V20a2,2,0,0,1-2,2H16V10Z"></path>
+                <path d="M22,4V8H2V4A2,2,0,0,1,4,2H20A2,2,0,0,1,22,4Z"></path>
+              </g>
+            </svg>
+          </span>
+          <a
+            class="text-decoration-none fs-5 ps-3 align-content-center"
+            [ngStyle]="{'color': activeTab.includes('dashboard') ? 'white' : 'black'}"
+          >
+           Dashboard
+          </a>
+          <span
+              *ngIf="activeTab.includes('dashboard')"
+              class="line rounded-5 position-absolute"
+              [ngStyle]="{'background-color': 'rgba(0, 114, 188, 1)'}"
+            >
+          </span>
+        </li>
+
+        <li
+          role="button"
+          class="list-group-item border-0 pb-3 d-flex align-items-center position-relative transition-bg"
+          [ngClass]="{'active': activeTab.includes('applied')}"
+          [routerLink]="'/applied'"
+          [ngStyle]="{'background-color': activeTab.includes('applied') ? 'rgba(0, 114, 188, 1)' : 'transparent'}"
+        >
+        <span>
+          <svg width="28" height="28" [attr.fill]="activeTab.includes('applied') ? 'white' : 'black'"  viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g> <path fill="none" d="M0 0h24v24H0z"></path> <path d="M21 20h2v2H1v-2h2V3a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v17zM11 8H9v2h2v2h2v-2h2V8h-2V6h-2v2zm3 12h2v-6H8v6h2v-4h4v4z"></path> </g> </g>
+          </svg>
+        </span>
+          <a
+            class="text-decoration-none fs-5 ps-3 align-content-center"
+            [ngStyle]="{'color': activeTab.includes('applied') ? 'white' : 'black'}"
+          >
+            Weather Data
+          </a>
+          <span
+              *ngIf="activeTab.includes('applied')"
+              class="line rounded-5 position-absolute"
+              [ngStyle]="{'background-color': 'rgba(0, 114, 188, 1)'}"
+            >
+          </span>
+
+        </li>
+        <li
+          role="button"
+          class="list-group-item border-0 pb-3 d-flex align-items-center position-relative transition-bg "
+          [ngClass]="{'active': activeTab.includes('settings')}"
+          [routerLink]="'/settings'"
+          [ngStyle]="{'background-color': activeTab.includes('settings') ? 'rgba(0, 114, 188, 1)' : 'transparent'}"
+        >
+        <span>
+          <svg width="28" height="28" [attr.fill]="activeTab.includes('settings') ? 'white' : 'black'" fill="#000000"  version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512" xml:space="preserve"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g> <g> <path d="M256,0C114.841,0,0,114.841,0,256s114.841,256,256,256s256-114.841,256-256S397.159,0,256,0z M364.146,300.188h-62.118 v62.118c0,25.42-20.608,46.028-46.028,46.028s-46.028-20.608-46.028-46.028v-62.118h-62.118c-25.42,0-46.028-20.608-46.028-46.028 s20.608-46.028,46.028-46.028h62.118v-62.119c0-25.42,20.608-46.028,46.028-46.028s46.028,20.608,46.028,46.028v62.118h62.118 c25.42,0,46.028,20.608,46.028,46.028C410.175,279.579,389.567,300.188,364.146,300.188z"></path> </g> </g> </g>
+          </svg>
+        </span>
+          <a
+            class="text-decoration-none fs-5 ps-3 align-content-center"
+            [ngStyle]="{'color': activeTab.includes('settings') ? 'white' : 'black'}"
+          >
+            Settings
+          </a>
+          <span
+              *ngIf="activeTab.includes('settings')"
+              class="line rounded-5 position-absolute"
+              [ngStyle]="{'background-color': 'rgba(0, 114, 188, 1)'}"
+            >
+          </span>
+        </li>
+        <!-- <small
+          role="button"
+          class="list-group-item w-100 pb-3 position-absolute bottom-0 start-0 d-flex align-items-center position-relative transition-bg"
+          (click)="logout()"
+        >
+        <span>
+          <svg width="28" height="28" viewBox="0 0 24.00 24.00" xmlns="http://www.w3.org/2000/svg" fill="none"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.064" d="M20 12h-9.5m7.5 3l3-3-3-3m-5-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2h5a2 2 0 002-2v-1"></path> </g>
+          </svg>
+        </span>
+          <a class="text-decoration-none fs-5 ps-3 align-content-center">Logout</a>
+      </small> -->
+      </ul>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,31 @@
+.error-wrapper {
+  height: 100vh;
+  background: linear-gradient(135deg, #1f2933, #111827);
+}
+
+.error-icon-wrapper {
+  display: flex;
+  justify-content: center;
+}
+
+.error-icon {
+  font-size: 72px;
+  font-weight: 700;
+  color: #ffc107;
+  background: rgba(255, 193, 7, 0.1);
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+h2 {
+  letter-spacing: 0.5px;
+}
+
+p {
+  font-size: 14px;
+  line-height: 1.6;
+}

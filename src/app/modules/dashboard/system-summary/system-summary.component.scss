@@ -1,0 +1,85 @@
+
+
+
+.scroll-container-summary {
+  max-height: calc(100vh - 300px);
+  min-height: calc(100vh - 300px);
+  overflow-y: auto;
+   scrollbar-width: none;     // Firefox
+  -ms-overflow-style: none;  // IE & Edge
+
+  &::-webkit-scrollbar {
+    display: none;           // Chrome, Safari
+  }
+}
+.summary-card {
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+}
+
+.summary-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.summary-header h5 {
+  margin: 0;
+  font-weight: 600;
+}
+
+.summary-header p {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: #6c757d;
+}
+
+.summary-accordion .accordion-item {
+  border: none;
+  border-bottom: 1px solid #f1f1f1;
+}
+
+.summary-accordion .accordion-button {
+  padding: 14px 20px;
+  font-weight: 500;
+  background: transparent;
+  box-shadow: none;
+}
+
+.summary-accordion .accordion-button:not(.collapsed) {
+  background-color: #f8f9fa;
+  color: #000;
+}
+
+.summary-accordion .accordion-button::after {
+  background-size: 14px;
+}
+
+.step {
+  min-width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 600;
+  margin-right: 12px;
+  color: #fff;
+}
+
+.accordion-body {
+  padding: 12px 56px;
+}
+
+.accordion-body ul {
+  margin: 0;
+  padding-left: 0;
+  list-style: none;
+}
+
+.accordion-body li {
+  font-size: 13px;
+  color: #555;
+  margin-bottom: 6px;
+}

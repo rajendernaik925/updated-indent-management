@@ -1,0 +1,62 @@
+
+
+<div style="background:red; color:white; padding:10px;">
+  PAGINATOR LOADED
+</div>
+
+<div
+  class="d-flex justify-content-between align-items-center mt-1"
+  *ngIf="pageInfo.count > 0"
+>
+
+
+  <!-- Showing Records -->
+  <span class="small badge custom-bg text-white">
+    Showing {{ pageInfo.startIndex }} to {{ pageInfo.endIndex }}
+    of {{ pageInfo.count }} Records
+  </span>
+
+  <!-- Pagination Buttons -->
+  <ul class="pagination pagination-sm mb-1">
+
+    <!-- Previous -->
+    <li class="page-item">
+      <button
+        type="button"
+        class="border-none text-white custom-action-btn px-2 py-1 me-2"
+        (click)="prevPage()"
+        [disabled]="!pageInfo.prev_page"
+        [ngClass]="{
+          'custom-bg': pageInfo.prev_page,
+          'bg-secondary': !pageInfo.prev_page
+        }"
+      >
+        <i class="bi bi-chevron-left"></i>
+      </button>
+    </li>
+
+    <!-- Page Info -->
+    <li class="page-item me-2 d-none d-md-block">
+      <span class="px-3 py-1 small text-dark fw-bold border rounded bg-light">
+        Page {{ pageInfo.page }} of {{ pageInfo.page_count }}
+      </span>
+    </li>
+
+    <!-- Next -->
+    <li class="page-item">
+      <button
+        type="button"
+        class="border-none text-white custom-action-btn px-2 py-1"
+        (click)="nextPage()"
+        [disabled]="!pageInfo.next_page"
+        [ngClass]="{
+          'custom-bg': pageInfo.next_page,
+          'bg-secondary': !pageInfo.next_page
+        }"
+      >
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </li>
+
+  </ul>
+</div>

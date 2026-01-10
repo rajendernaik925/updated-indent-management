@@ -1,0 +1,33 @@
+input::placeholder,
+textarea::placeholder {
+  font-size: 0.775rem;
+  color: #6c757d;
+  opacity: 0.5;
+}
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: #000 !important;
+  box-shadow: none !important;
+}
+
+input,
+textarea,
+select {
+  font-size: 0.775rem !important;
+}
+
+.form-label-small {
+  display: block;
+  margin-bottom: 0.25rem;
+  font-size: 13px;
+  color: #6c757d;
+}
+.Hover:hover {
+  text-decoration: underline;
+}
+
+.Hover {
+  text-decoration: none;
+}
+

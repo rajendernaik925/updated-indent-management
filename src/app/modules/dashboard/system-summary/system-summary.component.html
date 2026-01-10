@@ -1,0 +1,27 @@
+<div class="card summary-card">
+        <div class="summary-header">
+          <h5>System Summary</h5>
+        </div>
+        <div class="accordion summary-accordion scroll-container-summary" id="summaryAccordion">
+          <div class="accordion-item" *ngFor="let item of summaryList; let i = index">
+            <h2 class="accordion-header">
+              <button class="accordion-button collapsed" data-bs-toggle="collapse"
+                [attr.data-bs-target]="'#' + item.id">
+                <span class="step me-2" [ngClass]="item.stepClass">
+                  {{ item.step }}
+                </span>
+                {{ item.title }}
+              </button>
+            </h2>
+            <div class="accordion-collapse collapse" [id]="item.id" data-bs-parent="#summaryAccordion">
+              <div class="accordion-body">
+                <ul class="mb-0">
+                  <li *ngFor="let point of item.points">
+                    {{ point }}
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>

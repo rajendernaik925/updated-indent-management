@@ -1,0 +1,77 @@
+
+/* Overlay */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  z-index: 1000;
+}
+
+/* Close button EXACT like screenshot */
+.close-btn {
+  position: fixed;
+  top: 60px;
+  right: 162px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: red;
+  color: white;
+  border: none;
+  font-size: 20px;
+  font-weight: 700;
+  cursor: pointer;
+  z-index: 1100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.close-btn:hover {
+  background: rgb(158, 5, 5);
+  color: white;
+}
+
+/* PDF container */
+.pdf-container {
+  position: absolute;
+  top: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 70%;
+  height: calc(100% - 80px);
+  background: #ffffff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+}
+
+/* File selector */
+.file-selector {
+  border-bottom: 1px solid #ddd;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+/* PDF iframe */
+.pdf-container iframe {
+  width: 100%;
+  height: calc(100% - 36px);
+  border: none;
+}
+
+/* Radio selected styling */
+.form-check-input:checked + .form-check-label {
+  color: #0AB86D;
+  font-weight: 600;
+}
+
+.form-check-input:checked {
+  background-color: #0AB86D;
+  border-color: #0AB86D;
+}
+
+.form-check-input:checked[type="radio"] {
+  background-image: radial-gradient(circle, #fff 35%, #0AB86D 36%);
+}

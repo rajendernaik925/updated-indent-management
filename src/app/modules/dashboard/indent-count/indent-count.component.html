@@ -1,0 +1,8 @@
+<div class="d-flex flex-wrap gap-3 mb-2">
+    <div class="card cursor-pointer green-card shadow-sm border-0 flex-fill text-center p-3" *ngFor="let card of summaryCards">
+      <h6 class="text-muted mb-2">{{ card.title }}</h6>
+      <h4 class="fw-bold" [ngClass]="card.countClass">
+        {{ card.count }}
+      </h4>
+    </div>
+  </div>

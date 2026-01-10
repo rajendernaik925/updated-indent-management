@@ -1,0 +1,30 @@
+<div class="card border-0 shadow-sm p-4">
+        <h5 class="fw-bold mb-3">Module Access</h5>
+
+        <div *ngFor="let module of modules" class="mb-2">
+          <div class="d-flex justify-content-between align-items-center p-2 rounded border" [ngClass]="{
+            'access-write': module.displayInUi && module.canWrite,
+            'access-read': module.displayInUi && !module.canWrite,
+            'access-no': !module.displayInUi
+          }">
+
+            <span class="">{{ module.moduleName }}</span>
+
+            <span class="badge" [ngClass]="{
+              'badge-write': module.displayInUi && module.canWrite,
+              'badge-read': module.displayInUi && !module.canWrite,
+              'badge-no': !module.displayInUi
+            }">
+
+              <ng-container *ngIf="module.displayInUi; else noAccess">
+                {{ module.canWrite ? 'Full Access ✅' : 'Read Only 🔒' }}
+              </ng-container>
+
+              <ng-template #noAccess>
+                Restricted 🚫
+              </ng-template>
+            </span>
+          </div>
+        </div>
+
+      </div>

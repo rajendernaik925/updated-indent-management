@@ -1,0 +1,170 @@
+<!-- <div  class="container-fluid vh-100">
+  <div class="row h-100">
+    <div class="col-12 col-xxl-6 col-xl-6 text-center col-lg-6 col-md-6 col-sm-12 align-content-center justify-content-center ms-0 text-white custom-bg">
+      <img [src]="logo" alt="Logo">
+    </div>
+    <div class="col-12 col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 align-content-center border-0 justify-content-center">
+      <div class="row">
+        <div class="col-12 col-sm-12 col-md-12 col-lg-12">
+          <div class=" border-0 p-xxl-5 p-xl-5 p-lg-5 p-md-4 p-3">
+            <h2 class="mb-4">Login</h2>
+            <h2 class="text-success" (click)="sweetAlert()">Sweet Alert Test...?</h2>
+            <h2 class="text-danger" (click)="countInputTypes()">Count Input Types.....?</h2>
+            <h2 class="text-info" (click)="Toast()">Toast Message Test...?</h2>
+            <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" #formRef>
+              <div class="input-group mb-3">
+                <span class="input-group-text border"><i class="fas fa-envelope"></i></span>
+                <input type="text" class="form-control" placeholder="username Address" formControlName="username">
+              </div>
+              <div class="input-group mb-3">
+                <span class="input-group-text border"><i class="fas fa-lock"></i></span>
+                <input type="password" class="form-control" placeholder="Password" formControlName="password">
+              </div>
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <div class="form-check">
+                  <input class="form-check-input custom-text custom-bg" type="checkbox" formControlName="rememberMe" id="rememberMe">
+                  <label class="custom-text" for="rememberMe">Remember Me</label>
+                </div>
+                <a href="/auth/forgot" class="text-decoration-none custom-text">Forgot Password?</a>
+              </div>
+              <a href="/auth/mobile-login" class="d-block text-center mb-4 custom-text">Login With OTP</a>
+              <button type="submit" class="btn custom-bg w-100 text-white">Login</button>
+            </form>
+           </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+ -->
+
+
+<div class="container-fluid vh-100">
+  <div class="row h-100">
+
+    <!-- LEFT SECTION -->
+    <div class="col-12 col-md-6 d-flex flex-column justify-content-center p-5  text-white rounded"
+      style="background: linear-gradient(90deg, #AC2FD4, #48117E);">
+
+      <h1 class="fw-bold display-5">
+        Welcome to the Indent<br>Management Portal
+      </h1>
+
+      <p class="mt-3 fs-6">
+        Streamline your material requests, approvals, and SAP integrations — all in one place.
+      </p>
+
+      <!-- Illustration -->
+      <img [src]="sideImage" alt="Illustration" height="280px" width="350px">
+    </div>
+
+    <!-- RIGHT LOGIN SECTION -->
+    <div class="col-12 col-md-6 d-flex align-items-center justify-content-center">
+
+      <div class="p-4 p-md-5 ">
+
+        <!-- Logo -->
+        <div class="mb-4">
+          <img [src]="logo" alt="Logo" width="220">
+        </div>
+
+        <h3 class="fw-bold mb-1">Log in</h3>
+        <p class="text-muted small mb-4">
+          To raise, track, and manage ZPCC & FERT indents seamlessly.
+        </p>
+
+
+
+
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" #formRef>
+
+          <!-- username -->
+          <div class="mb-2">
+            <label class="form-label form-label-small">Employee ID</label>
+            <input type="text" class="form-control form-control-lg" placeholder="Employee ID" formControlName="username"
+              [ngClass]="{
+                'is-invalid': loginForm.get('username')?.invalid && 
+                              (loginForm.get('username')?.touched || loginForm.get('username')?.dirty)
+              }">
+          </div>
+
+          <!-- PASSWORD -->
+          <div class="mb-3">
+            <label class="form-label form-label-small">Password</label>
+            <input type="password" class="form-control form-control-lg" placeholder="Enter your Password"
+              formControlName="password" [ngClass]="{
+                'is-invalid': loginForm.get('password')?.invalid && 
+                              (loginForm.get('password')?.touched || loginForm.get('password')?.dirty)
+              }">
+          </div>
+
+          <!-- <div class="mb-3">
+            <label class="form-label form-label-small">Password</label>
+
+            <input type="password" class="form-control form-control-lg" placeholder="Enter your Password"
+              formControlName="password" [ngClass]="{
+                'is-invalid': loginForm.get('password')?.invalid &&
+                              loginForm.get('password')?.touched
+              }" />
+
+            <div class="invalid-feedback" *ngIf="loginForm.get('password')?.invalid &&
+           loginForm.get('password')?.touched">
+              <div *ngIf="loginForm.get('password')?.errors?.['required']">
+                Password is required
+              </div>
+
+              <div *ngIf="loginForm.get('password')?.errors?.['minlength']">
+                Password must be at least 4 characters
+              </div>
+
+              <div *ngIf="loginForm.get('password')?.errors?.['pattern']">
+                Must contain uppercase, lowercase, number & special character
+              </div>
+            </div>
+          </div> -->
+
+
+          <!-- Remember + Forgot -->
+          <!-- <div class="d-flex justify-content-between align-items-center mb-4">
+            <div class="form-check">
+              <input type="checkbox" class="form-check-input" id="rememberMe" formControlName="rememberMe">
+              <label for="rememberMe" class="form-check-label small">Remember Me</label>
+            </div>
+
+            <a routerLink="/auth/forgot"
+               class="small text-decoration-none text-primary">
+               Forgot Password?
+            </a>
+          </div> -->
+
+          <!-- LOGIN BUTTON -->
+          <span *ngIf="errorMessage" class="badge text-danger w-100 px-3 py-2 d-inline-block mb-2"
+            style="background-color: #f8d7da;">
+            {{ errorMessage }}
+          </span>
+
+          <button type="submit" class="btn btn-sm custom-btn btn-lg w-100 mb-5">
+            Log In
+          </button>
+
+          <!-- LOGIN WITH OTP -->
+          <!-- <div class="text-center mt-3">
+            <a routerLink="/auth/mobile-login"
+               class="small text-decoration-none text-primary">
+               Login with OTP
+            </a>
+          </div> -->
+
+        </form>
+
+        <p class="text-center text-muted small mt-4">
+          © 2025 All Rights Reserved by <a class="text-muted  Hover" href="https://www.heterohealthcare.com/"
+            target="_blank">Hetero Healthcare Ltd </a>
+        </p>
+
+      </div>
+
+    </div>
+  </div>
+</div>

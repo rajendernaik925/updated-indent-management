@@ -1,0 +1,23 @@
+.green-card {
+  background: linear-gradient(
+    135deg,
+    white 30%,
+    #d2e8de 100%
+  );
+  border-radius: 14px;
+}
+
+// .green-card {
+//   background: linear-gradient(
+//     135deg,
+//     #0ab86d,
+//     #0ab86d
+//   );
+//   border-radius: 14px;
+// }
+
+.green-card:hover {
+  transform: translateY(-3px);
+  transition: 0.3s ease;
+  box-shadow: 0 8px 22px rgba(10, 184, 109, 0.35);
+}
