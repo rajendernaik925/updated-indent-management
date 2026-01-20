@@ -36,8 +36,8 @@ label {
 
 
 .scroll-container {
-  max-height: calc(100vh - 255px);
-  min-height: calc(100vh - 255px);
+  max-height: calc(100vh - 305px);
+  min-height: calc(100vh - 305px);
   overflow-y: auto;
   scrollbar-width: none; // Firefox
   -ms-overflow-style: none; // IE & Edge
@@ -180,7 +180,7 @@ label {
 }
 
 /* Radio selected styling */
-.form-check-input:checked + .form-check-label {
+.form-check-input:checked+.form-check-label {
   color: #0AB86D;
   font-weight: 600;
 }
@@ -192,4 +192,8 @@ label {
 
 .form-check-input:checked[type="radio"] {
   background-image: radial-gradient(circle, #fff 35%, #0AB86D 36%);
+}
+
+.swal2-popup.modal-dialog {
+  max-width: 500px;
 }

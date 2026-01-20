@@ -11,6 +11,7 @@ import { Component } from '@angular/core';
   styleUrl: './system-summary.component.scss'
 })
 export class SystemSummaryComponent {
+
   summaryList = [
     {
       id: 'dashboard',
@@ -73,4 +74,8 @@ export class SystemSummaryComponent {
       ]
     }
   ];
+  trackById(index: number, item: any) {
+  return item.id;
+}
+
 }

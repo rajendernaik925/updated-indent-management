@@ -13,16 +13,16 @@ export const routes: Routes = [
   },
   {
     path: '',
-    canActivateChild:[authGuard],
+    canActivateChild: [authGuard],
     canActivate: [authGuard],
     loadChildren: () => import('./modules/module.routes').then(m => m.Routes),
   },
   {
-    path:'server-error',
+    path: 'server-error',
     component: ServerErrorComponent
   },
   {
-    path:'**',
-    component:PageNotFoundComponent
+    path: '**',
+    component: PageNotFoundComponent
   },
 ];

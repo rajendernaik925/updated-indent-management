@@ -85,7 +85,7 @@
       <div class="d-flex align-items-center gap-3 px-3 py-1 border rounded-pill shadow-sm bg-white">
 
         <!-- Search -->
-        <div *ngIf="currentModule === 'employee'" class="input-group input-group-sm" style="width: 220px;">
+        <div *ngIf="currentModule === 'initiator'" class="input-group input-group-sm" style="width: 220px;">
           <input #searchInput type="search" class="form-control border-0" style="font-size: 12px;"
             placeholder="Indent No, Raised By, Division.." (input)="onSearchChange(searchInput.value)" />
           <span class="input-group-text border-0 bg-transparent">
@@ -93,11 +93,13 @@
           </span>
         </div>
 
-        <div *ngIf="currentModule === 'employee'" class="vr" style="height: 26px;"></div>
+        <div *ngIf="currentModule === 'initiator'" class="vr" style="height: 26px;"></div>
 
         <!-- From Date -->
         <div class="d-flex align-items-center gap-1">
-          <span style="font-size: 11px; font-weight: 600;">From</span>
+          <span style="font-size: 11px; font-weight: 600; white-space: nowrap;">
+            From date : 
+          </span>
           <input #fromDate type="date" class="form-control form-control-sm border-0 p-0"
             style="font-size: 12px; height: 20px;" (change)="onDateChange(fromDate.value, toDate.value)" />
         </div>
@@ -106,7 +108,9 @@
 
         <!-- To Date -->
         <div class="d-flex align-items-center gap-1">
-          <span style="font-size: 11px; font-weight: 600;">To</span>
+          <span style="font-size: 11px; font-weight: 600; white-space: nowrap;">
+            To date : 
+          </span>
           <input #toDate type="date" class="form-control form-control-sm border-0 p-0"
             style="font-size: 12px; height: 20px;" (change)="onDateChange(fromDate.value, toDate.value)" />
         </div>
@@ -114,25 +118,25 @@
         <div class="vr" style="height: 26px;"></div>
 
         <!-- Division -->
-        <span *ngIf="currentModule !== 'employee'" style="font-size: 11px; font-weight: 600;">Division</span>
-        <select *ngIf="currentModule !== 'employee'" class="form-select form-select-sm border-0 p-0"
+        <span *ngIf="currentModule !== 'initiator'" style="font-size: 11px; font-weight: 600;">Division</span>
+        <select *ngIf="currentModule !== 'initiator'" class="form-select form-select-sm border-0 p-0"
           style="font-size: 12px; height: 20px; width: 140px;" (change)="onDivisionChange($event)">
           <option value="">Select</option>
           <option *ngFor="let d of divisionList" [value]="d.division_id">{{ d.division_name }}</option>
         </select>
 
-        <div *ngIf="currentModule !== 'employee'" class="vr" style="height: 26px;"></div>
+        <div *ngIf="currentModule !== 'initiator'" class="vr" style="height: 26px;"></div>
 
         <!-- Status -->
-        <span *ngIf="currentModule == 'employee'" style="font-size: 11px; font-weight: 700;">Status</span>
-        <select *ngIf="currentModule == 'employee'" class="form-select form-select-sm border-0 p-0"
+        <span *ngIf="currentModule == 'initiator'" style="font-size: 11px; font-weight: 700;">Status</span>
+        <select *ngIf="currentModule == 'initiator'" class="form-select form-select-sm border-0 p-0"
           style="font-size: 12px; height: 20px; width: 150px;" (change)="onStatusChange($event)">
           <option value="">Select</option>
           <option *ngFor="let s of statusMasterOptions" [value]="s.stage_code">{{ s.filter_status }}</option>
         </select>
 
-        <span *ngIf="currentModule !== 'employee'" style="font-size: 11px; font-weight: 600;">Status</span>
-        <select *ngIf="currentModule !== 'employee'" class="form-select form-select-sm border-0 p-0"
+        <span *ngIf="currentModule !== 'initiator'" style="font-size: 11px; font-weight: 600;">Status</span>
+        <select *ngIf="currentModule !== 'initiator'" class="form-select form-select-sm border-0 p-0"
           style="font-size: 12px; height: 20px; width: 140px;" [(ngModel)]="selectedStatusId"
           (ngModelChange)="onStatusChangeForFilter()">
           <option class="m-2" *ngFor="let s of statusList" [ngValue]="s.id">
@@ -145,7 +149,7 @@
           (click)="clearFilters()" title="Reset Filters"></i>
 
         <!-- Add Button -->
-        <button *ngIf="writeAccess && currentModule === 'employee'"
+        <button *ngIf="writeAccess && currentModule === 'initiator'"
           class="btn btn-sm px-3 custom-btn rounded-pill shadow-none" style="font-size: 12px; font-weight: 600;"
           (click)="addNewRequest()">
           Add New Request
@@ -173,7 +177,7 @@
             <tbody class="text-muted">
               <tr *ngFor="let item of indentRequestList" class="cursor-pointer" (click)="manageById(item['S.NO'])">
                 <td *ngFor="let key of tableKeys"
-                  [ngStyle]="currentModule === 'employee' 
+                  [ngStyle]="currentModule === 'initiator' 
                   ? {'white-space': 'nowrap', 'font-size': '10px', 'line-height': '0.8', 'text-transform': 'capitalize'}
                   : {'white-space': 'nowrap', 'font-size': '10px', 'line-height': '1.3', 'text-transform': 'capitalize'}">
 
@@ -181,7 +185,7 @@
                   <ng-container *ngIf="key === 'Status'; else normalCell">
                     <span class="badge text-white" [ngStyle]="{
                       'background-color': item?.['Colour Code'],
-                      'font-size': currentModule === 'employee' ? '10px' : '10px',
+                      'font-size': currentModule === 'initiator' ? '10px' : '10px',
                       'text-transform': 'capitalize'
                     }">
                       {{ item[key] }}
@@ -191,7 +195,7 @@
                   <!-- Normal Column -->
                   <ng-template #normalCell>
                     <span
-                      [ngStyle]="{'font-size': currentModule === 'employee' ? '12px' : '12px', 'text-transform': 'capitalize'}">
+                      [ngStyle]="{'font-size': currentModule === 'initiator' ? '12px' : '12px', 'text-transform': 'capitalize'}">
                       {{ item[key] }}
                     </span>
                   </ng-template>

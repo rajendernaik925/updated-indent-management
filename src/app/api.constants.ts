@@ -20,6 +20,7 @@ export const commonUrls = {
   processIndent: (module: string) => `/${module}/process-indent`,
   materialUpdate: (module: string) => `/${module}/material-update`,
   removeMaterial: (module: string) => `/${module}/material-disable`,
+  fileUpdate: (module: string) => `/${module}/file-update`,
 }
 
 export const commonListUrls = {

@@ -6,12 +6,12 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { SettingsService } from '../../../core/services/settings.service';
 import { masterService } from '../../master.service';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { COMMON_EXPORTS } from '../../../core/common-exports.constants';
 import { SharedModule } from '../../../shared/shared-modules';
 import { indentService } from '../indent.service';
 
-type ModuleType = 'employee' | 'manager' | 'purchase' | 'hod' | 'initiator' | 'indent';
+type ModuleType = 'initiator' | 'manager' | 'purchase' | 'hod' | 'initiator' | 'indent';
 
 
 @Component({
@@ -75,9 +75,10 @@ export class ListComponent implements OnInit {
   private settingService: SettingsService = inject(SettingsService);
   private fb: FormBuilder = inject(FormBuilder);
   private masterService: masterService = inject(masterService);
-  private indentService: indentService = inject(indentService)
+  private indentService: indentService = inject(indentService);
+  private location: Location = inject(Location)
 
-  currentModule: ModuleType = 'employee';
+  currentModule: ModuleType = 'initiator';
   dataList: any[] = [];
 
   constructor(private http: HttpClient) {
@@ -120,24 +121,14 @@ export class ListComponent implements OnInit {
     this.detectModule(this.router.url);
     this.setModuleFromUrl();
 
-    // ✅ Listen to route changes (TYPE SAFE)
-    this.router.events
-      .pipe(
-        filter(
-          (event: RouterEvent): event is NavigationEnd =>
-            event instanceof NavigationEnd
-        )
-      )
-      .subscribe(event => {
-        // this.detectModule(event.urlAfterRedirects);
-      });
+
   }
 
   private detectModule(url: string): void {
     if (!url) return;
 
 
-    if (url.includes('employee')) this.currentModule = 'employee';
+    if (url.includes('initiator')) this.currentModule = 'initiator';
     else if (url.includes('manager')) this.currentModule = 'manager';
     else if (url.includes('purchase')) this.currentModule = 'purchase';
     else if (url.includes('hod')) this.currentModule = 'hod';
@@ -154,7 +145,7 @@ export class ListComponent implements OnInit {
     this.mastersApis();
     // this.callListAPI(this.currentPage, null, null, null);
     // this.loadIndents();
-    if (this.currentModule == 'employee') {
+    if (this.currentModule == 'initiator') {
       this.callListAPI(
         this.currentPage,
         this.searchInputValue,
@@ -228,9 +219,9 @@ export class ListComponent implements OnInit {
 
     console.log('Payload to send:', payload);
 
-    const stage = this.currentModule === 'employee' ? 'initiator' : this.currentModule;
+    // const stage = this.currentModule === 'initiator' ? 'initiator' : this.currentModule;
 
-    this.indentService.indentRequestList(stage, payload).subscribe({
+    this.indentService.indentRequestList(this.currentModule, payload).subscribe({
       next: (res: any) => {
         const parsedRes = typeof res === 'string' ? JSON.parse(res) : res;
 
@@ -426,7 +417,7 @@ export class ListComponent implements OnInit {
     const encodedTwice = btoa(encodedOnce);
     // this.router.navigate(['/employee/detail', encodedTwice]);
 
-    const stage = this.currentModule === 'employee' ? 'indent' : this.currentModule;
+    const stage = this.currentModule === 'initiator' ? 'indent' : this.currentModule;
     const module = this.currentModule;
     console.log("module : ", module)
     this.router.navigate([`${this.currentModule}/details`, stage, encodedTwice]);
@@ -512,11 +503,11 @@ export class ListComponent implements OnInit {
     this.divisionMaster();
     this.plantsMaster();
     this.materialTypesMaster();
-    if (this.currentModule == 'employee') {
+    if (this.currentModule == 'initiator') {
       this.statusMaster();
     }
     // this.divisionMaster();
-    if (this.currentModule !== 'employee') {
+    if (this.currentModule !== 'initiator') {
       this.statusMasterForFilter()
     }
   }
@@ -573,7 +564,7 @@ export class ListComponent implements OnInit {
   }
 
   divisionMaster() {
-    const stage = ({ employee: 'I', manager: 'M', purchase: 'P', hod: 'H' } as any)[this.currentModule || ''];
+    const stage = ({ initiator: 'I', manager: 'M', purchase: 'P', hod: 'H' } as any)[this.currentModule || ''];
     this.masterService.divisionsMaster(this.userId, stage).subscribe({
       next: (res: any) => {
         this.divisionList = res;
@@ -846,8 +837,8 @@ export class ListComponent implements OnInit {
     // Map URL → moduleId
     let moduleId: number | null = null;
 
-    if (url.includes('/employee')) {
-      this.currentModule = 'employee';
+    if (url.includes('/initiator')) {
+      this.currentModule = 'initiator';
       moduleId = 2; // Indent Requests
     }
     else if (url.includes('/manager')) {

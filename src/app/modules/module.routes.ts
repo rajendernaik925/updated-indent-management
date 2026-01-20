@@ -1,5 +1,6 @@
 import { Route } from "@angular/router";
 import { BaseLayoutComponent } from "../base-layout/base-layout.component";
+import { ServerErrorComponent } from "../shared/components/server-error/server-error.component";
 
 export const Routes: Route[] = [
   {
@@ -11,13 +12,14 @@ export const Routes: Route[] = [
         loadChildren: () => import('./dashboard/dashboard.routes').then(m => m.Routes),
       },
       {
-        path: 'manager',
-        loadChildren: () => import('./indent-workflow/indent.routes').then(m => m.Routes)
+        path: 'initiator',
+        loadChildren: () => import('./indent-workflow/indent.routes').then(m => m.Routes),
+        data: { module: 'initiator' }
       },
       {
-        path: 'employee',
+        path: 'manager',
         loadChildren: () => import('./indent-workflow/indent.routes').then(m => m.Routes),
-        data: { module: 'employee' }
+        data: { module: 'manager' }
       },
       {
         path: 'purchase',

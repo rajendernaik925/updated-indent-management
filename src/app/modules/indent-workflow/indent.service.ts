@@ -1,7 +1,7 @@
 import { CoreService } from "../../core/services/core.services";
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { inject, Injectable } from "@angular/core";
-import { catchError, EMPTY, Observable, of, throwError } from "rxjs";
+import { catchError, EMPTY, Observable, of, pipe, throwError } from "rxjs";
 import { commonListUrls, commonUrls } from "../../api.constants";
 import { Router } from "@angular/router";
 
@@ -163,6 +163,13 @@ export class indentService {
             catchError(this.handleError)
         );
     }
+
+    fileUpdate(module: string, id: number, formData: FormData) {
+        return this.http.put(`${commonUrls.fileUpdate(module)}/${id}`, formData).pipe(
+            catchError(this.handleError)
+        );
+    }
+
 
     // raiseIndentRequest(formData: FormData): Observable<string> {
     //   return this.http.post(`${employeeUrls.raiseIndentRequest}`, formData, { responseType: 'text' }).pipe(

@@ -9,7 +9,7 @@ import { SettingsService } from '../../core/services/settings.service';
 import { filter } from 'rxjs';
 import { ModuleAccess } from '../../core/modals/access';
 
-type TabStatus = 'dashboard' | 'employee' | 'manager' | 'purchase' | 'hod';
+type TabStatus = 'dashboard' | 'initiator' | 'manager' | 'purchase' | 'hod';
 
 
 
@@ -36,7 +36,7 @@ export class HeaderComponent implements OnInit, AfterViewInit {
 
   tabs: { label: string; route: string; key: TabStatus }[] = [
     { label: 'Dashboard', route: 'dashboard', key: 'dashboard' },
-    { label: 'Indent Requests', route: 'employee', key: 'employee' },
+    { label: 'Indent Requests', route: 'initiator', key: 'initiator' },
     { label: 'Manager Approvals', route: 'manager', key: 'manager' },
     { label: 'Purchase Approvals', route: 'purchase', key: 'purchase' },
     { label: 'HOD Approvals', route: 'hod', key: 'hod' }
@@ -97,7 +97,7 @@ export class HeaderComponent implements OnInit, AfterViewInit {
   }
 
   private updateFromUrl(url: string): void {
-    if (url.includes('/employee')) this.selectedStatus = 'employee';
+    if (url.includes('/initiator')) this.selectedStatus = 'initiator';
     else if (url.includes('/manager')) this.selectedStatus = 'manager';
     else if (url.includes('/purchase')) this.selectedStatus = 'purchase';
     else if (url.includes('/hod')) this.selectedStatus = 'hod';

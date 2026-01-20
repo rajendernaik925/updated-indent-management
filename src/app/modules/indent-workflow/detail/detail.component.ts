@@ -1,7 +1,7 @@
-import { Component, OnInit, ViewChild, inject } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CoreService } from '../../../core/services/core.services';
-import { FormBuilder, ReactiveFormsModule, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, FormGroup, Validators, FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Tooltip } from 'bootstrap';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -18,8 +18,9 @@ import { ViewFileComponent } from "../view-file/view-file.component";
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    ViewFileComponent
-],
+    ViewFileComponent,
+    FormsModule
+  ],
   templateUrl: './detail.component.html',
   styleUrl: './detail.component.scss'
 })
@@ -45,8 +46,10 @@ export class DetailComponent implements OnInit {
   updatedDate: any;
   materialId: any;
   indentId: any;
+  selectedFiles: File[] = [];
 
   @ViewChild(ViewFileComponent) pdfViewer!: ViewFileComponent;
+  @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
   private fb = inject(FormBuilder);
   private route = inject(ActivatedRoute);
   private coreService = inject(CoreService);;
@@ -164,7 +167,7 @@ export class DetailComponent implements OnInit {
     }
 
     const stageConfig = [
-      { key: 'initiator', label: 'Initiator' },
+      // { key: 'initiator', label: 'Initiator' },
       { key: 'manager', label: 'Manager' },
       { key: 'purchase', label: 'Purchase' },
       { key: 'hod', label: 'HOD' }
@@ -273,65 +276,120 @@ export class DetailComponent implements OnInit {
 
 
 
-  removeMaterial(id: any) {
-    Swal.fire({
-      title: 'Enter your comments',
-      input: 'textarea',
-      inputPlaceholder: 'Type your comments here...',
-      inputAttributes: {
-        maxlength: '500', // max 500 characters
-        minlength: '2',   // min 2 characters (validation in inputValidator)
-        autocapitalize: 'off',
-        autocorrect: 'off'
-      },
-      showCancelButton: true,
-      confirmButtonText: 'Submit',
-      cancelButtonText: 'Cancel',
-      inputValidator: (value) => {
-        if (!value) {
-          return 'Comments cannot be empty';
-        }
-        if (value.length < 2) {
-          return 'Minimum 2 characters required';
-        }
-        if (value.length > 500) {
-          return 'Maximum 500 characters allowed';
-        }
-        return null;
-      },
-      customClass: {
-        popup: 'swal2-popup-custom' // optional: for extra styling
-      }
-    }).then((result) => {
-      if (result.isConfirmed && result.value) {
-        const payload = {
-          materialId: id,
-          comments: result.value
-        };
+  // removeMaterial(id: any) {
+  //   Swal.fire({
+  //     title: 'Enter your comments',
+  //     input: 'textarea',
+  //     inputPlaceholder: 'Type your comments here...',
+  //     inputAttributes: {
+  //       maxlength: '500', // max 500 characters
+  //       minlength: '2',   // min 2 characters (validation in inputValidator)
+  //       autocapitalize: 'off',
+  //       autocorrect: 'off'
+  //     },
+  //     showCancelButton: true,
+  //     confirmButtonText: 'Submit',
+  //     cancelButtonText: 'Cancel',
+  //     inputValidator: (value) => {
+  //       if (!value) {
+  //         return 'Comments cannot be empty';
+  //       }
+  //       if (value.length < 2) {
+  //         return 'Minimum 2 characters required';
+  //       }
+  //       if (value.length > 500) {
+  //         return 'Maximum 500 characters allowed';
+  //       }
+  //       return null;
+  //     },
+  //     customClass: {
+  //       popup: 'swal2-popup-custom' // optional: for extra styling
+  //     }
+  //   }).then((result) => {
+  //     if (result.isConfirmed && result.value) {
+  //       const payload = {
+  //         materialId: id,
+  //         comments: result.value
+  //       };
 
-        console.log('Payload:', payload);
+  //       console.log('Payload:', payload);
 
-        // Call API
-        let moduleType = this.module;
+  //       // Call API
+  //       let moduleType = this.module;
 
-        if (this.module === 'indent') {
-          moduleType = 'initiator';
-        }
-        this.indentService.removeMaterial(moduleType, payload).subscribe({
-          next: (res: any) => {
-            this.coreService.displayToast({
-              type: 'success',
-              message: res
-            });
-            this.indentDetails();
-          },
-          // error: (err: any) => {
-          //   this.coreService.displayToast({
-          //     type: 'error',
-          //     message: 'Something went wrong'
-          //   });
-          // }
+  //       if (this.module === 'indent') {
+  //         moduleType = 'initiator';
+  //       }
+  //       this.indentService.removeMaterial(moduleType, payload).subscribe({
+  //         next: (res: any) => {
+  //           this.coreService.displayToast({
+  //             type: 'success',
+  //             message: res
+  //           });
+  //           this.indentDetails();
+  //         },
+  //         // error: (err: any) => {
+  //         //   this.coreService.displayToast({
+  //         //     type: 'error',
+  //         //     message: 'Something went wrong'
+  //         //   });
+  //         // }
+  //       });
+  //     }
+  //   });
+  // }
+
+  removeComment = '';
+  commentError = '';
+  selectedMaterialId: any;
+
+  openRemoveMaterialModal(id: any) {
+    this.selectedMaterialId = id;
+    this.removeComment = '';
+    this.commentError = '';
+
+    const modal = new (window as any).bootstrap.Modal(
+      document.getElementById('removeMaterialModal')
+    );
+    modal.show();
+  }
+
+  confirmRemoveMaterial() {
+    if (!this.removeComment) {
+      this.commentError = 'Comments cannot be empty';
+      return;
+    }
+
+    if (this.removeComment.length < 2) {
+      this.commentError = 'Minimum 2 characters required';
+      return;
+    }
+
+    if (this.removeComment.length > 500) {
+      this.commentError = 'Maximum 500 characters allowed';
+      return;
+    }
+
+    const payload = {
+      materialId: this.selectedMaterialId,
+      comments: this.removeComment
+    };
+
+    let moduleType = this.module === 'indent' ? 'initiator' : this.module;
+
+    this.indentService.removeMaterial(moduleType, payload).subscribe({
+      next: (res: any) => {
+        this.coreService.displayToast({
+          type: 'success',
+          message: res
         });
+
+        this.indentDetails();
+
+        const modalEl = document.getElementById('removeMaterialModal');
+        const modalInstance =
+          (window as any).bootstrap.Modal.getInstance(modalEl);
+        modalInstance.hide();
       }
     });
   }
@@ -502,8 +560,7 @@ export class DetailComponent implements OnInit {
     const module = this.module || '';
     const encodedModule = btoa(module);
     const encodedId = btoa(btoa(this.Id.toString()));
-    const stage = this.module === 'indent' ? 'employee' : this.module;
-
+    const stage = this.module === 'indent' ? 'initiator' : this.module;
     this.router.navigate([`${stage}/summary`, module, encodedId]);
   }
 
@@ -658,5 +715,65 @@ export class DetailComponent implements OnInit {
       }
     });
   }
+
+  addFiles() {
+    this.fileInput.nativeElement.click();
+  }
+
+  onFilesSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+
+    if (!input.files || input.files.length === 0) {
+      return;
+    }
+
+    const files = Array.from(input.files);
+
+    // ✅ PDF validation
+    const invalidFile = files.some(file =>
+      file.type !== 'application/pdf' &&
+      !file.name.toLowerCase().endsWith('.pdf')
+    );
+
+    if (invalidFile) {
+      this.coreService.displayToast({
+        type: 'error',
+        message: 'Only PDF files are allowed'
+      });
+
+      this.selectedFiles = [];
+      input.value = '';
+      return;
+    }
+
+    const formData = new FormData();
+
+    // ✅ Append only valid PDF files
+    files.forEach(file => {
+      formData.append('files', file);
+    });
+
+    // ✅ AUTO API CALL
+    let moduleType = this.module;
+    
+    if (this.module === 'indent') {
+      moduleType = 'initiator';
+    }
+
+    this.indentService.fileUpdate(moduleType, this.Id as any, formData).subscribe({
+      next: (res: any) => {
+        this.coreService.displayToast({
+          type: 'success',
+          message: 'Files uploaded successfully'
+        });
+        this.indentDetails();
+        input.value = '';
+      },
+      error: (err) => {
+        console.error('Upload failed', err);
+      }
+    });
+  }
+
 }
 

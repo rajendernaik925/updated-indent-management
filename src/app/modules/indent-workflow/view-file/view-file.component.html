@@ -8,21 +8,13 @@
     <div class="d-flex align-items-center gap-3 p-2">
 
       <div class="file-selector d-flex flex-nowrap gap-3 flex-grow-1 overflow-auto">
-        <div *ngFor="let file of pdfFiles; let i = index"
-             class="form-check me-3 py-1"
-             style="white-space: nowrap;">
+        <div *ngFor="let file of pdfFiles; let i = index" class="form-check me-3 py-1" style="white-space: nowrap;">
 
-          <input type="radio"
-                 name="pdfFiles"
-                 class="form-check-input"
-                 [checked]="selectedFileIndex === i"
-                 (change)="selectFile(i)"
-                 id="pdf{{ i }}" />
+          <input type="radio" name="pdfFiles" class="form-check-input" [checked]="selectedFileIndex === i"
+            (change)="selectFile(i)" id="pdf{{ i }}" />
 
-          <label class="form-check-label ms-1 fw-bold text-truncate"
-                 style="max-width: 200px;"
-                 [title]="file.name"
-                 for="pdf{{ i }}">
+          <label class="form-check-label ms-1 fw-bold text-truncate" style="max-width: 100px;" [title]="file.name"
+            for="pdf{{ i }}">
             {{ file.name }}
           </label>
         </div>

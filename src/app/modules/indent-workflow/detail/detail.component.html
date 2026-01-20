@@ -41,9 +41,19 @@
             View Files
           </button> -->
 
-          <button *ngIf="indentDetailsData?.files" class="btn btn-sm btn-info text-white px-4" (click)="openFiles()">
+          <button *ngIf="indentDetailsData?.files" class="btn btn-sm custom-edit-btn py-1 px-4" (click)="openFiles()">
             View Files
           </button>
+
+          <input type="file" #fileInput multiple hidden (change)="onFilesSelected($event)"
+            accept="application/pdf,.pdf" />
+
+          <button *ngIf="indentDetailsData?.canWrite" class="btn btn-sm btn-info text-white py-1 px-4"
+            (click)="addFiles()">
+            Add Files
+          </button>
+
+
 
           <!-- PDF Viewer Component -->
           <app-view-file #pdfViewer [indentId]="Id"></app-view-file>
@@ -58,161 +68,165 @@
       <div class=" shadow-s border-0 rounded-4">
         <div class="card-bod">
 
-          <div class="row g-3">
-            <div class="col-md-6">
-              <label class="form-label text-muted small">Division</label>
-              <span class="form-control form-control-sm bg-light" readonly>
-                {{ indentDetailsData?.division || '-' }}
-              </span>
-            </div>
+          <fieldset class="border rounded-3 p-3 mb-2">
+            <legend class="float-none w-auto px-3 small fw-semibold custom-text">
+              Division & Budget Details
+            </legend>
 
-            <div class="col-md-3">
-              <label class="form-label text-muted small">Planned Budget</label>
-              <span class="form-control form-control-sm bg-light">
-                {{ indentDetailsData?.plannedBudget || '-' }}
-              </span>
-            </div>
+            <div class="row g-3">
 
-            <div class="col-md-3">
-              <label class="form-label text-muted small">Estimated Budget</label>
-              <span class="form-control form-control-sm bg-light">
-                {{ indentDetailsData?.estimatedBudget || '-' }}
-              </span>
-            </div>
+              <!-- Division -->
+              <div class="col-md-6">
+                <label class="form-label text-muted small mb-1">Division</label>
+                <div class="form-control form-control-sm bg-light">
+                  {{ indentDetailsData?.division || '-' }}
+                </div>
+              </div>
 
-            <!-- <div class="col-md-3">
-              <label class="form-label text-muted small">File</label>
-              <span class="form-control form-control-sm bg-light fw-semibold">
-                View Files
-              </span>
-            </div> -->
-          </div>
-          <hr class="custom-hr">
+              <!-- Planned Budget -->
+              <div class="col-md-3">
+                <label class="form-label text-muted small mb-1">Planned Budget</label>
+                <div class="form-control form-control-sm bg-light text-end">
+                  {{ indentDetailsData?.plannedBudget || '-' }}
+                </div>
+              </div>
+
+              <!-- Estimated Budget -->
+              <div class="col-md-3">
+                <label class="form-label text-muted small mb-1">Estimated Budget</label>
+                <div class="form-control form-control-sm bg-light text-end">
+                  {{ indentDetailsData?.estimatedBudget || '-' }}
+                </div>
+              </div>
+
+            </div>
+          </fieldset>
+
+          <!-- <hr class="custom-hr"> -->
 
           <!-- <h6 class="fw-bold mb-3">Indent Details</h6> -->
 
           <!-- First Row -->
           <div class="scroll-container">
 
-            <div *ngFor="let mat of indentDetailsData?.materials; let i = index; let isLast = last" class="mb-3">
+            <div *ngFor="let mat of indentDetailsData?.materials; let i = index; let isLast = last" class="mb-4">
 
-              <!-- Header -->
-              <div class="d-flex justify-content-between align-items-center mb-2">
-                <!-- Left side -->
-                <h5 class="fw-semibold text-success">
+              <fieldset class="border rounded-3 px-3">
+
+                <!-- Legend -->
+                <legend class="float-none w-auto px-3 small fw-semibold custom-text">
                   Material {{ i + 1 }}
-                </h5>
+                </legend>
 
-                <!-- Right side button -->
-                <button *ngIf="indentDetailsData?.materials.length > 1 && indentDetailsData?.canWrite"
-                  class="btn btn-sm btn-danger" (click)="removeMaterial(mat.sno)">
-                  Remove Material
-                </button>
-
-              </div>
-
-
-              <div class="row g-2 small">
-
-                <!-- Plant -->
-                <div class="col-md-4">
-                  <label class="form-label text-muted mb-1">Plant</label>
-                  <span class="form-control form-control-sm bg-light" style="min-height: 28px;">
-                    {{ mat?.plantName || '-' }}
-                  </span>
+                <!-- Remove Button (NOT inside legend, NOT right side) -->
+                <div class="d-flex justify-content-end mb-3"
+                  *ngIf="indentDetailsData?.materials.length > 1 && indentDetailsData?.canWrite">
+                  <button class="btn btn-sm btn-outline-danger" (click)="openRemoveMaterialModal(mat.sno)">
+                    Remove Material
+                  </button>
                 </div>
 
-                <!-- Material Type -->
-                <div class="col-md-4">
-                  <label class="form-label text-muted mb-1">Material Type</label>
-                  <span class="form-control form-control-sm bg-light" style="min-height: 28px;">
-                    {{ mat?.materialType || '-' }}
-                  </span>
+                <div class="row g-3 small">
+
+                  <!-- Plant -->
+                  <div class="col-md-4">
+                    <label class="form-label text-muted mb-1">Plant</label>
+                    <div class="form-control form-control-sm bg-light">
+                      {{ mat?.plantName || '-' }}
+                    </div>
+                  </div>
+
+                  <!-- Material Type -->
+                  <div class="col-md-4">
+                    <label class="form-label text-muted mb-1">Material Type</label>
+                    <div class="form-control form-control-sm bg-light">
+                      {{ mat?.materialType || '-' }}
+                    </div>
+                  </div>
+
+                  <!-- Quantity -->
+                  <div class="col-md-4">
+                    <label class="form-label text-muted mb-1 d-flex justify-content-between">
+                      <span>Quantity</span>
+                      <span *ngIf="indentDetailsData?.canWrite && ['indent','manager'].includes(module)"
+                        class="custom-text cursor-pointer" (click)="quantity(mat.quantity, mat.lastModified, mat.sno)">
+                        comment
+                      </span>
+                    </label>
+                    <div class="form-control form-control-sm bg-light">
+                      {{ mat?.quantity || '-' }}
+                    </div>
+                  </div>
+
+                  <!-- Material Name -->
+                  <div class="col-md-4">
+                    <label class="form-label text-muted mb-1">Material Name</label>
+                    <div class="form-control form-control-sm bg-light text-truncate" title="{{ mat?.materialName }}">
+                      {{ mat?.materialName || '-' }}
+                    </div>
+                  </div>
+
+                  <!-- Unit Price -->
+                  <div class="col-md-4">
+                    <label class="form-label text-muted mb-1 d-flex justify-content-between">
+                      <span>Unit Price</span>
+                      <span *ngIf="indentDetailsData?.canWrite && module === 'purchase'"
+                        class="custom-text cursor-pointer"
+                        (click)="estimatedPrice(mat.unitPrice, mat.lastModified, mat.sno)">
+                        comment
+                      </span>
+                    </label>
+                    <div class="form-control form-control-sm bg-light">
+                      {{ mat?.unitPrice || '0' }}
+                    </div>
+                  </div>
+
+                  <!-- Total Price -->
+                  <div class="col-md-4">
+                    <label class="form-label text-muted mb-1">Total Price</label>
+                    <div class="form-control form-control-sm bg-light text-success">
+                      {{ mat?.unitPrice * mat?.quantity | number:'1.2-2' }}
+                    </div>
+                  </div>
+
+                  <!-- Delivery Date -->
+                  <div class="col-md-4">
+                    <label class="form-label text-muted mb-1">Delivery Date</label>
+                    <div class="form-control form-control-sm bg-light">
+                      {{ mat?.deliveryDate | date:'dd-MM-yyyy' }}
+                    </div>
+                  </div>
+
+                  <!-- Vendor -->
+                  <div class="col-md-4">
+                    <label class="form-label text-muted mb-1 d-flex justify-content-between">
+                      <span>Vendor</span>
+                      <span *ngIf="indentDetailsData?.canWrite" class="custom-text cursor-pointer"
+                        (click)="vendorOffCanvas(mat.vendor, mat.lastModified, mat.sno)">
+                        comment
+                      </span>
+                    </label>
+                    <div class="form-control form-control-sm bg-light">
+                      {{ mat?.vendor || '-' }}
+                    </div>
+                  </div>
+
+                  <!-- Comments -->
+                  <div class="col-md-4">
+                    <label class="form-label text-muted mb-1">Comments</label>
+                    <div class="form-control form-control-sm bg-light text-truncate" title="{{ mat?.comments }}">
+                      {{ mat?.comments || '-' }}
+                    </div>
+                  </div>
+
                 </div>
 
-                <!-- Quantity -->
-                <div class="col-md-4">
-                  <label class="form-label text-muted mb-1 d-flex justify-content-between align-items-center">
-                    <span>Quantity</span>
-                    <span *ngIf="indentDetailsData?.canWrite && ['indent', 'manager'].includes(module)"
-                      class="custom-text cursor-pointer" (click)="quantity(mat.quantity, mat.lastModified, mat.sno)">
-                      comment
-                    </span>
-                  </label>
-                  <span class="form-control form-control-sm bg-light" style="min-height: 28px;">
-                    {{ mat?.quantity || '-' }}
-                  </span>
-                </div>
+              </fieldset>
 
-                <!-- Material Name -->
-                <div class="col-md-4">
-                  <label class="form-label text-muted mb-1">Material Name</label>
-                  <span class="form-control form-control-sm bg-light text-truncate" style="min-height: 28px;"
-                    title="{{ mat?.materialName }}">
-                    {{ mat?.materialName || '-' }}
-                  </span>
-                </div>
-
-                <!-- Unit Price -->
-                <div class="col-md-4">
-                  <label class="form-label text-muted mb-1 d-flex justify-content-between align-items-center">
-                    <span>Unit Price</span>
-                    <span *ngIf="indentDetailsData?.canWrite && ['purchase'].includes(module)"
-                      class="custom-text cursor-pointer"
-                      (click)="estimatedPrice(mat.unitPrice, mat.lastModified, mat.sno)">
-                      comment
-                    </span>
-                  </label>
-                  <span class="form-control form-control-sm bg-light" style="min-height: 28px;">
-                    {{ mat?.unitPrice || '0' }}
-                  </span>
-                </div>
-
-                <!-- Total Price -->
-                <div class="col-md-4">
-                  <label class="form-label text-muted mb-1">Total Price</label>
-                  <span class="form-control form-control-sm bg-light">
-                    {{ mat?.unitPrice * mat?.quantity | number:'1.2-2' }}
-                  </span>
-                </div>
-
-                <!-- Delivery Date -->
-                <div class="col-md-4">
-                  <label class="form-label text-muted mb-1">Delivery Date</label>
-                  <span class="form-control form-control-sm bg-light" style="min-height: 28px;">
-                    {{ mat?.deliveryDate | date:'dd-MM-yyyy' }}
-                  </span>
-                </div>
-
-                <!-- Vendor -->
-                <div class="col-md-4">
-                  <label class="form-label text-muted mb-1 d-flex justify-content-between align-items-center">
-                    <span>Vendor</span>
-                    <span *ngIf="indentDetailsData?.canWrite" class="custom-text cursor-pointer"
-                      (click)="vendorOffCanvas(mat.vendor, mat.lastModified, mat.sno)">
-                      comment
-                    </span>
-                  </label>
-                  <span class="form-control form-control-sm bg-light" style="min-height: 28px;">
-                    {{ mat?.vendor || '-' }}
-                  </span>
-                </div>
-
-                <!-- Comments -->
-                <div class="col-md-4">
-                  <label class="form-label text-muted mb-1">Comments</label>
-                  <span class="form-control form-control-sm bg-light text-truncate" style="min-height: 28px;"
-                    title="{{ mat?.comments }}">
-                    {{ mat?.comments || '-' }}
-                  </span>
-                </div>
-              </div>
-              <hr *ngIf="!isLast">
             </div>
 
-
-
           </div>
+
 
 
 
@@ -521,5 +535,41 @@
         Update Change
       </button>
     </form>
+  </div>
+</div>
+
+<!-- Remove Material Modal -->
+<div class="modal fade" id="removeMaterialModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+
+      <!-- Header -->
+      <div class="modal-header">
+        <h5 class="modal-title">Enter your comments</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <!-- Body -->
+      <div class="modal-body">
+        <textarea class="form-control" rows="4" placeholder="Type your comments here..." [(ngModel)]="removeComment"
+          maxlength="500"></textarea>
+
+        <small class="text-danger mt-1 d-block" *ngIf="commentError">
+          {{ commentError }}
+        </small>
+      </div>
+
+      <!-- Footer -->
+      <div class="d-flex justify-content-end p-2">
+        <button type="button" class="btn btn-secondary me-3 btn-sm" data-bs-dismiss="modal">
+          Cancel
+        </button>
+
+        <button type="button" class="btn custom-btn btn-sm" (click)="confirmRemoveMaterial()">
+          Submit
+        </button>
+      </div>
+
+    </div>
   </div>
 </div>

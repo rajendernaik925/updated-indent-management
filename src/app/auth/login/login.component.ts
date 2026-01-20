@@ -8,6 +8,7 @@ import { CoreService } from '../../core/services/core.services';
 import { IAuthResponse } from '../../core/modals/tokent';
 import { SettingsService } from '../../core/services/settings.service';
 import Swal from 'sweetalert2';
+import { StorageService } from '../../core/services/storage.service';
 
 @Component({
   selector: 'app-login',
@@ -29,6 +30,7 @@ export class LoginComponent {
   private authService: AuthService = inject(AuthService);
   private coreService: CoreService = inject(CoreService);
   private settingsService: SettingsService = inject(SettingsService);
+  private storageService: StorageService = inject(StorageService)
 
   loginForm: FormGroup = new FormGroup({
     username: new FormControl('', [Validators.required, Validators.minLength(5)]),
@@ -60,6 +62,7 @@ export class LoginComponent {
           this.settingsService.setEmployeeAccess(tokens.employeeAccess);
           // Optional: store for refresh
           localStorage.setItem("employeeAccess", JSON.stringify(tokens.employeeAccess));
+          this.storageService.setToken("dashboardModal", '1')
           // Navigate
           this.router.navigate(['/dashboard']);
           this.coreService.displayToast({
@@ -71,7 +74,7 @@ export class LoginComponent {
         error: (err: HttpErrorResponse) => {
           this.errorMessage = err.message;
           setTimeout(() => {
-          this.errorMessage = '';
+            this.errorMessage = '';
           }, 3000);
           // Swal.fire({
           //   icon: 'error',
