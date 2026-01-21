@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild, inject } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, inject, AfterViewInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CoreService } from '../../../core/services/core.services';
 import { FormBuilder, ReactiveFormsModule, FormGroup, Validators, FormsModule } from '@angular/forms';
@@ -24,7 +24,7 @@ import { ViewFileComponent } from "../view-file/view-file.component";
   templateUrl: './detail.component.html',
   styleUrl: './detail.component.scss'
 })
-export class DetailComponent implements OnInit {
+export class DetailComponent implements OnInit, AfterViewInit {
 
   Id: number | null = null;
   module: any;
@@ -136,10 +136,14 @@ export class DetailComponent implements OnInit {
   }
 
 
-  ngAfterViewInit() {
-    const tooltipTriggerList = Array.from(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-    tooltipTriggerList.forEach((tooltipTriggerEl: any) => {
-      new Tooltip(tooltipTriggerEl);
+  
+   ngAfterViewInit() {
+    // Select all tooltip triggers
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+
+    // Initialize tooltips
+    tooltipTriggerList.forEach(el => {
+      new Tooltip(el as HTMLElement);
     });
   }
 
@@ -161,54 +165,98 @@ export class DetailComponent implements OnInit {
   }
 
   prepareApprovalStages(history: any) {
-    if (!history) {
-      this.approvalStages = [];
-      return;
+    this.approvalStages = [];
+
+    if (!history) return;
+
+    let stopWorkflow = false;
+
+    const formatDateTime = (datetime: string | null) => {
+      if (!datetime) return { date: '--', time: '--' };
+      const dt = new Date(datetime);
+      return {
+        date: dt.toLocaleDateString('en-GB', {
+          day: '2-digit',
+          month: 'short',
+          year: 'numeric'
+        }),
+        time: dt.toLocaleTimeString('en-GB', {
+          hour: '2-digit',
+          minute: '2-digit'
+        })
+      };
+    };
+
+    /* ================== MANAGERS ================== */
+    if ('manager' in history) {
+      if (Array.isArray(history.manager) && history.manager.length === 0) {
+        this.approvalStages.push({
+          label: 'Manager',
+          status: 'Pending For Approval',
+          ...formatDateTime(null),
+          processedBy: '-',
+          comment: '-'
+        });
+      } else if (Array.isArray(history.manager)) {
+        for (let i = 0; i < history.manager.length; i++) {
+          const mgr = history.manager[i];
+          const status = mgr.status || 'Pending For Approval';
+          const dt = formatDateTime(mgr.processedAt);
+
+          this.approvalStages.push({
+            label: `Manager ${i + 1}`,
+            status: status,
+            date: dt.date,
+            time: dt.time,
+            processedBy: mgr.manager || '-',
+            comment: mgr.comment || '-'
+          });
+
+          if (status === 'Rejected') {
+            stopWorkflow = true;
+            break;
+          }
+        }
+      }
     }
 
-    const stageConfig = [
-      // { key: 'initiator', label: 'Initiator' },
-      { key: 'manager', label: 'Manager' },
-      { key: 'purchase', label: 'Purchase' },
-      { key: 'hod', label: 'HOD' }
-    ];
+    /* ================== PURCHASE ================== */
+    if (!stopWorkflow && history.purchase) {
+      const status = history.purchase.status || 'Pending For Approval';
+      const dt = formatDateTime(history.purchase.processedAt);
 
-    this.approvalStages = stageConfig
-      .filter(stage => history[stage.key])
-      .map(stage => {
-        const data = history[stage.key];
-
-        return {
-          label: stage.label,
-
-          status: data?.processedAt || data?.initiatedAt
-            ? 'Approved'
-            : 'Pending',
-
-          date: (data?.processedAt || data?.initiatedAt)
-            ? new Date(data.processedAt || data.initiatedAt)
-              .toLocaleDateString('en-GB', {
-                day: '2-digit',
-                month: 'short',
-                year: 'numeric'
-              })
-            : '--',
-
-          processedBy:
-            data?.processedBy ||
-            data?.initiatedBy ||
-            '-',
-
-          comment:
-            data?.comment ||
-            data?.userData?.[0]?.updates?.[0]?.list?.[0]?.fieldList?.[0]?.comment ||
-            data?.userData?.[0]?.rejections?.[0]?.comment ||
-            ''
-        };
+      this.approvalStages.push({
+        label: 'Purchase',
+        status: status,
+        date: dt.date,
+        time: dt.time,
+        processedBy: history.purchase.processedBy || '-',
+        comment: history.purchase.comment || '-'
       });
+
+      if (status === 'Rejected') stopWorkflow = true;
+    }
+
+    /* ================== HOD ================== */
+    if (!stopWorkflow && history.hod) {
+      const status = history.hod.status || 'Pending For Approval';
+      const dt = formatDateTime(history.hod.processedAt);
+
+      this.approvalStages.push({
+        label: 'HOD',
+        status: status,
+        date: dt.date,
+        time: dt.time,
+        processedBy: history.hod.processedBy || '-',
+        comment: history.hod.comment || '-'
+      });
+    }
 
     console.log('Prepared approvalStages:', this.approvalStages);
   }
+
+
+
 
 
 
@@ -755,7 +803,7 @@ export class DetailComponent implements OnInit {
 
     // ✅ AUTO API CALL
     let moduleType = this.module;
-    
+
     if (this.module === 'indent') {
       moduleType = 'initiator';
     }

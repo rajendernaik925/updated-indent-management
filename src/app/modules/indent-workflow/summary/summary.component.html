@@ -35,19 +35,16 @@
                         <!-- Status Image -->
                         <div class="d-flex align-items-center">
                             <!-- Approved -->
-                            <img *ngIf="indentDetailsData?.status === 'Approved'"
-                                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRTSUTAjr-pQv-yRCJtNBfONIpiMUdIVOvsdw&s"
-                                class="status-img" alt="Approved" />
+                            <img *ngIf="indentDetailsData?.status === 'Approved'" [src]="approvedLogo" alt="Approved"
+                                class="status-img" />
 
                             <!-- Rejected -->
-                            <img *ngIf="indentDetailsData?.status === 'Rejected'"
-                                src="https://thumbs.dreamstime.com/b/reject-round-pink-gold-label-isolated-transparent-background-reject-reject-reject-round-pink-gold-label-isolated-343068466.jpg"
-                                class="status-img" alt="Rejected" />
+                            <img *ngIf="indentDetailsData?.status === 'Rejected'" [src]="rejectedLogo" alt="Rejected"
+                                class="status-img" />
 
-                            <!-- Pending / Others -->
+                            <!-- Pending -->
                             <img *ngIf="indentDetailsData?.status !== 'Approved' && indentDetailsData?.status !== 'Rejected'"
-                                src="https://thumbs.dreamstime.com/b/pending-pending-gold-badge-blue-ribbon-pending-120418122.jpg"
-                                class="status-img pending" alt="Pending" />
+                                [src]="pendingLogo" alt="Pending" class="status-img" />
                         </div>
                     </div>
 
@@ -176,147 +173,95 @@
 
 
 
-        <!-- RIGHT : STAGE-WISE APPROVAL FLOW (EXPANDABLE) -->
         <div class="col-md-8 scroll-containe ">
             <div class="card border-0 shadow-sm">
                 <div class="card-body">
-
                     <h6 class="fw-bold mb-3">Approval Stages</h6>
 
-                    <!-- INITIAL STAGE  : Initiator -->
-                    <div class="border rounded p-2 mb-2">
+                    <div *ngFor="let stage of approvalSummary" class="border rounded p-2 mb-2">
+
+                        <!-- HEADER -->
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
-                                <p class="mb-0 fw-semibold">Indent Initiator</p>
-                                <small class="text-muted">Quantity and Vendor</small>
+                                <p class="mb-0 fw-semibold">
+                                    {{ stage.label }} -
+                                    <span [ngClass]="{'text-warning small': !stage.user, 'text-body': stage.user}">
+                                        {{ stage.user || 'Not Assigned' }}
+                                    </span>
+                                </p>
+                                <small class="text-muted">{{ stage.updates.length }} activities</small>
                             </div>
 
-                            <button class="btn btn-sm btn-outline-primary" data-bs-toggle="collapse"
-                                data-bs-target="#initiatorStage">
-                                +
+                            <button *ngIf="stage.updates.length" class="btn btn-sm btn-outline-primary"
+                                (click)="toggleCollapse(stage.label)">
+                                {{ toggleIcon(stage.label) }}
                             </button>
                         </div>
 
-                        <div id="initiatorStage" class="collapse mt-2 border-top pt-2">
-                            <small class="text-muted">Activity Details</small>
-                            <ul class="list-unstyled small mb-0">
-                                <li>✔ Vendor chnages done</li>
-                                <li>✔ Quantity chnages</li>
-                            </ul>
+                        <!-- BODY -->
+                        <div class="mt-2 border-top pt-2" [class.show]="collapseState[getCollapseId(stage.label)]"
+                            [hidden]="!collapseState[getCollapseId(stage.label)]">
+
+                            <table class="table table-bordered table-sm mt-2 small">
+                                <thead>
+                                    <tr>
+                                        <th>Material</th>
+                                        <th>Field</th>
+                                        <th>Old</th>
+                                        <th>New</th>
+                                        <th>User</th>
+                                        <th>Date</th>
+                                        <th>Time</th>
+                                        <th>Comment</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody *ngIf="stage.updates.length; else noData">
+                                    <tr *ngFor="let u of stage.updates">
+                                        <td>{{ u.material || '-' }}</td>
+                                        <td>{{ u.field || '-' }}</td>
+                                        <td>{{ u.oldValue || '-'}}</td>
+                                        <td [class.text-danger]="u.type === 'rejection'">
+                                            {{ u.newValue }}
+                                        </td>
+                                        <td>{{ u.user }}</td>
+                                        <td>{{ u.date }}</td>
+                                        <td>{{ u.time }}</td>
+                                        <td>{{ u.comment }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <ng-template #noData>
+                                <div class="text-center text-muted">No activities</div>
+                            </ng-template>
+
                         </div>
                     </div>
 
-                    <!-- STAGE 1 : MANAGER -->
-                    <div class="border rounded p-2 mb-2">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <p class="mb-0 fw-semibold">Manager Approval</p>
-                                <small class="text-muted">3 Members (Quantity and Vendor )</small>
-                            </div>
-
-                            <button class="btn btn-sm btn-outline-primary" data-bs-toggle="collapse"
-                                data-bs-target="#managerStage">
-                                +
-                            </button>
-                        </div>
-
-                        <div id="managerStage" class="collapse mt-2 border-top pt-2">
-                            <small class="text-muted">Activity Details</small>
-                            <ul class="list-unstyled small mb-0">
-                                <li>✔ Manager 1 approved – 10:15 AM</li>
-                                <li>✔ Manager 2 approved – 11:05 AM</li>
-                                <li>✔ Manager 3 approved – 12:30 PM</li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <!-- STAGE 2 : PURCHASE -->
-                    <div class="border rounded p-2 mb-2">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <p class="mb-0 fw-semibold">Purchase Approval</p>
-                                <small class="text-muted">Unit Price & Vendor</small>
-                            </div>
-
-                            <button class="btn btn-sm btn-outline-primary" data-bs-toggle="collapse"
-                                data-bs-target="#purchaseStage">
-                                +
-                            </button>
-                        </div>
-
-                        <div id="purchaseStage" class="collapse mt-2 border-top pt-2">
-                            <small class="text-muted">Activity Details</small>
-                            <ul class="list-unstyled small mb-0">
-                                <li>✔ Vendor Selected – ABC Suppliers</li>
-                                <li>✔ Unit Price Added – ₹ 2,000</li>
-                                <li>✔ Purchase Reviewed – 03:10 PM</li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <!-- STAGE 3 : HOD -->
-                    <div class="border rounded p-2">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <p class="mb-0 fw-semibold">HOD Approval</p>
-                                <small class="text-muted">Final Approval (Vendor)</small>
-                            </div>
-
-                            <button class="btn btn-sm btn-outline-primary" data-bs-toggle="collapse"
-                                data-bs-target="#hodStage">
-                                +
-                            </button>
-                        </div>
-
-                        <div id="hodStage" class="collapse mt-2 border-top pt-2">
-                            <small class="text-muted">Activity Details</small>
-                            <ul class="list-unstyled small mb-0">
-                                <li>✔ Final Approval Given</li>
-                                <li>✔ Approved Amount – ₹ 2,40,000</li>
-                                <li>✔ Approval Time – 05:00 PM</li>
-                            </ul>
-                        </div>
-                    </div>
                 </div>
             </div>
+            <div class="border rounded p-3 mt-3 bg-light small">
+                <div class="mb-1">
+                    <strong>Total Stages:</strong> {{ totalStages }}
+                </div>
 
-            <!-- SUMMARY CARD -->
-            <div class="card border-0 shadow-sm mt-3">
-                <div class="card-body p-3">
-
-                    <h6 class="fw-bold mb-3">Overall Summary</h6>
-
-                    <div class="row small">
-                        <div class="col-6 mb-2">
-                            <span class="text-muted">Current Status</span>
-                            <div class="fw-semibold text-success">Approved</div>
-                        </div>
-
-                        <div class="col-6 mb-2">
-                            <span class="text-muted">Total Stages</span>
-                            <div class="fw-semibold">3</div>
-                        </div>
-
-                        <div class="col-6 mb-2">
-                            <span class="text-muted">Completed</span>
-                            <div class="fw-semibold text-success">3 / 3</div>
-                        </div>
-
-                        <div class="col-6 mb-2">
-                            <span class="text-muted">Pending</span>
-                            <div class="fw-semibold text-warning">0</div>
-                        </div>
-                    </div>
-
-                    <!-- STATUS MESSAGE -->
-                    <div class="alert alert-success py-2 mt-3 mb-0 small text-center">
-                        ✔ All approval stages completed successfully
-                    </div>
-
+                <div>
+                    <strong>Final Status:</strong>
+                    <span class="fw-semibold" [ngClass]="{
+                      'text-success': finalStatus.type === 'success',
+                      'text-danger': finalStatus.type === 'danger',
+                      'text-warning': finalStatus.type === 'warning'
+                    }">
+                        {{ finalStatus.text }}
+                    </span>
                 </div>
             </div>
 
 
         </div>
+
+
+
+
     </div>
-</div>

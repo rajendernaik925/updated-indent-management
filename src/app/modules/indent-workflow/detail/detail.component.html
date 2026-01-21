@@ -16,7 +16,9 @@
 
           </button> -->
 
-
+          <div>
+            <i class="bi bi-chevron-left fs-4 cursor-pointer" (click)="back()"></i>
+          </div>
           <h5 class="m-0">{{ indentDetailsData?.indentId }}</h5>
 
           <span class="badge ms-3 fw-semibold" [ngClass]="{
@@ -111,7 +113,7 @@
 
             <div *ngFor="let mat of indentDetailsData?.materials; let i = index; let isLast = last" class="mb-4">
 
-              <fieldset class="border rounded-3 px-3">
+              <fieldset class="border rounded-3 px-3 pb-3">
 
                 <!-- Legend -->
                 <legend class="float-none w-auto px-3 small fw-semibold custom-text">
@@ -253,12 +255,14 @@
 
           <div class="d-flex justify-content-between align-items-center mb-3">
             <h5 class="fw-bold mb-0">Approval Status</h5>
-
-            <button class="btn custom-btn btn-sm" (click)="viewSummary()">
+            <button class="btn btn-sm btn-primary" (click)="viewSummary()">
               View Summary
             </button>
           </div>
 
+          <!-- <p class="mb-1 text-muted small mb-2">
+            Indent initiated by <span class="fw-medium">{{ indentDetailsData?.raisedName | titlecase }}</span>
+          </p> -->
 
           <div class="scroll-container-summary">
             <table class="table table-bordered align-middle small">
@@ -271,53 +275,59 @@
               </thead>
 
               <tbody>
+                <tr>
+                  <td>
+                    <span class="fw-bold text-dark">Initiator</span><br />
+                    <span class="text-success">
+                      ● Initiated
+                    </span><br />
+                    <small>
+                      {{ indentDetailsData?.initiatedDate | date:'dd MMM yyyy - HH:mm' }}
+                    </small>
+
+                  </td>
+                  <td>{{ indentDetailsData?.raisedName | titlecase }}</td>
+                  <td>-</td>
+                </tr>
                 <tr *ngFor="let stage of approvalStages">
                   <!-- Stage -->
                   <td>
                     <span class="fw-bold text-dark">{{ stage.label }}</span><br />
                     <span [ngClass]="{
-                      'text-success': stage.status === 'Approved',
-                      'text-warning': stage.status === 'Pending'
-                    }">
-                      ● {{ stage.status }}
+                       'text-success': stage.status === 'Approved',
+                       'text-warning': stage.status === 'Pending For Approval',
+                       'text-danger': stage.status === 'Rejected'
+                     }">
+                      ● {{ stage.status == 'Pending For Approval' ? 'Pending' : stage.status }}
                     </span><br />
-                    <small>{{ stage.date }}</small>
+                    <small>{{ stage.date }} - {{stage.time}}</small>
                   </td>
 
-                  <!-- Users -->
-                  <!-- <td class="">
-                    <ng-container *ngIf="stage.users?.length; else noUser">
-                      <div *ngFor="let user of stage.users" class="small">
-                        {{ user.user }}
-                      </div>
-                    </ng-container>
-
-                    <ng-template #noUser>
-                      <div class="text-center text-muted">-</div>
-                    </ng-template>
-                  </td> -->
-
-                  <td class="">
-                    <ng-container *ngIf="stage.processedBy; else noUser">
-                      {{ stage.processedBy | titlecase}}
+                  <!-- Approving Authority -->
+                  <td>
+                    <ng-container *ngIf="stage.processedBy && stage.processedBy !== '-'; else noUser">
+                      {{ stage.processedBy | titlecase }}
                     </ng-container>
 
                     <ng-template #noUser>
                       <div class="text-center text-muted">-</div>
                     </ng-template>
                   </td>
-
 
                   <!-- Comment -->
-                  <td>
-                    <span *ngIf="stage.comment; else noComment">
-                      {{ stage.comment | slice: 0:30 }}{{ stage.comment.length > 30 ? '...' : '' }}
+                  <td *ngIf="stage.comment && stage.comment !== '-'; else noComment">
+                    <span [attr.data-bs-toggle]="'tooltip'" [attr.title]="stage.comment">
+                      {{ stage.comment | slice:0:30 }}
+                      <span *ngIf="stage.comment.length > 30">...</span>
                     </span>
-                    <ng-template #noComment>
-                      <div class="text-cente text-muted">-</div>
-                    </ng-template>
                   </td>
+
+                  <ng-template #noComment>
+                    <td>-</td>
+                  </ng-template>
+
                 </tr>
+
               </tbody>
 
             </table>
